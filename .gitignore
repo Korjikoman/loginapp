@@ -1,0 +1,44 @@
+# Python
+*.pyc
+*~
+__pycache__
+
+# Env
+.env
+myvenv/
+venv/
+
+# Database
+db.sqlite3
+
+# Local excludes in root directory
+/GNUmakefile
+/config.cache
+/config.log
+/config.status
+/pgsql.sln
+/pgsql.sln.cache
+/Debug/
+/Release/
+/tmp_install/
+/portlock/
+
+# Static folder at project root
+/static/
+
+# macOS
+._*
+.DS_Store
+.fseventsd
+.Spotlight-V100
+
+# Windows
+Thumbs.db*
+ehthumbs*.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# Visual Studio
+.vscode/
+.history/
+*.code-workspace

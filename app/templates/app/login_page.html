@@ -1,0 +1,20 @@
+{% extends 'app/base.html'%} {% block content %}
+<h1>Welcome back!</h1>
+<label for="staticEmail" class="email"> Email </label>
+<input
+  type="text"
+  class="form-email-input"
+  id="staticEmail"
+  value="email@example.com"
+/>
+
+<label for="inputPassword" class="password">Password</label>
+<input type="password" class="form-password-input" id="inputPassword" />
+
+<button type="submit" class="btn btn-submit">Submit</button>
+
+<h3>Don't have an account? Register!</h3>
+<h2>OR</h2>
+<p>continue with</p>
+
+{% endblock %}

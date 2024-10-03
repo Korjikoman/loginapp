@@ -13,10 +13,10 @@ def login_user(request):
                             password=password)
         if user is not None:
             login(request, user)
-            return redirect('main') # Redirect to a success page.
+            return redirect('main_page') # Redirect to a success page.
         else:
-            messages.success(request, "We don't know such user, try again")
-            pass
+            messages.success(request, ("We don't know such user, try again!!!!!!!"))
+            return redirect('login_user')
     else:
         return render(request, 'app/login_page.html', {})
 

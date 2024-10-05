@@ -37,8 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_bootstrap4',
+    'crispy_forms',
     'app',
 ]
+
+CRISPY_TEMPLATE_PACK="bootstrap4"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -76,8 +80,8 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "new_db",
-        "USER" : "postgres",
+        "NAME": "m1",
+        "USER" : "korjik",
         "PASSWORD" :"123",
         "HOST" : "localhost",
         "PORT": "5432",

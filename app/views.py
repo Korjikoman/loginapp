@@ -1,6 +1,8 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from .forms import RegisterForm
+
 
 def main(request):
     return render(request, 'app/main_page.html')
@@ -23,3 +25,16 @@ def login_user(request):
 def logout_user(request):
     logout(request)
     return render(request, 'app/login_page.html', {})
+
+def register(response):
+    if response.method == "POST":
+        form = RegisterForm(response.POST)
+        if form.is_valid():
+            form.save()
+        return redirect('login_user')
+    else: 
+        form = RegisterForm()
+        return render(response, "app/register.html", {'form' : form })
+    
+
+        

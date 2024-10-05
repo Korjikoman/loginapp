@@ -1,20 +1,29 @@
 {% extends 'app/base.html'%} {% block content %}
-<h1>Welcome back!</h1>
-<label for="staticEmail" class="email"> Email </label>
-<input
-  type="text"
-  class="form-email-input"
-  id="staticEmail"
-  value="email@example.com"
-/>
+<h1>Login</h1>
+<br />
 
-<label for="inputPassword" class="password">Password</label>
-<input type="password" class="form-password-input" id="inputPassword" />
+<form action="" method="POST">
+  {% csrf_token %}
 
-<button type="submit" class="btn btn-submit">Submit</button>
+  <form>
+    <div class="mb-3">
+      <label for="exampleInputEmail1" class="form-label">Username</label>
+      <input
+        type="text"
+        class="form-control"
+        name="username"
+        aria-describedby="emailHelp"
+      />
+    </div>
+    <div class="mb-3">
+      <label for="exampleInputPassword1" class="form-label">Password</label>
+      <input type="password" class="form-control" name="password" />
+    </div>
 
-<h3>Don't have an account? Register!</h3>
-<h2>OR</h2>
-<p>continue with</p>
+    <input type="submit" value="Submit" class="btn btn-secondary" />
+  </form>
 
-{% endblock %}
+  <br /><br />
+
+  {% endblock %}
+</form>

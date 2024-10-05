@@ -10,7 +10,10 @@
       <h1>Our cite</h1>
     </header>
 
-    <main class="container">{% block content %} {% endblock %}</main>
+    <main class="container">
+      {% if messages%} {% for message in messages %} {{message}} {% endfor %}
+      {%endif %} {% block content %} {% endblock %}
+    </main>
 
     <footer>
       <h2>This is footer !</h2>

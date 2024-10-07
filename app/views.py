@@ -37,8 +37,10 @@ def register(request):
             form.save()
             messages.success(request, ("Success"))
             print("sucessssss")
-            return redirect('login_user')
-        raise AttributeError('blah blH BLh')
+            return redirect('main_page')
+        else:
+            messages.success(request, 'Somethings wrong!')
+            return redirect('register')
 
     else: 
         print("else")

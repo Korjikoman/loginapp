@@ -4,7 +4,7 @@ from django.contrib import messages
 from .forms import RegisterForm
 from django.contrib.auth.models import User
 
-def main(request, username):
+def main(request):
     
     return render(request, 'app/main_page.html')
 
@@ -29,21 +29,15 @@ def logout_user(request):
     return render(request, 'app/login_page.html', {})
 
 def register(request):
-    print("start")
-    
     if request.method == "POST":
-        print("1")
         form = RegisterForm(request.POST)
         if form.is_valid():
-            print("1111")
             form.save()
             messages.success(request, ("Success"))
-            print("sucessssss")
             return redirect('main_page')
         else:
-            messages.success(request, 'Somethings wrong!')
-            return redirect('register')
-
+            
+            return render(request, "app/register.html", {'form' : form, 'errors': form.errors})
     else: 
         print("else")
         form = RegisterForm()

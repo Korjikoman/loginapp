@@ -1,25 +1,14 @@
 {% extends 'app/base.html'%} {% block title %} Create an Account {%endblock%}
 {%block content%}
 
-   
-{% comment %} <form method="POST" class="form-group">
-  {{ form|crispy}} {% csrf_token %}
 
-  <button type="submit" class="btn btn-success">Register</button>
-</form> {% endcomment %}
-
-{% if form.errors %}
-<p>Error!!!</p>
-{% endif %}
 <form method="POST">
    {% csrf_token %}
-
+      <p>
+         {{errors}}
+      </p>
       {{form.as_p}}
-     
       <input type="submit" name="submit" value="Register">
-        
-
-
 </form>
 
 {% endblock%}

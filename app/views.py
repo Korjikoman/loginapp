@@ -2,9 +2,10 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import RegisterForm
+from django.contrib.auth.models import User
 
-
-def main(request):
+def main(request, username):
+    
     return render(request, 'app/main_page.html')
 
 def login_user(request):
@@ -14,6 +15,7 @@ def login_user(request):
         user = authenticate(request, username=username,
                             password=password)
         if user is not None:
+            messages.success(request, ("Succesfully logged in!"))
             login(request, user)
             return redirect('main_page') # Redirect to a success page.
         else:

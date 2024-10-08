@@ -1,14 +1,7 @@
 {% extends 'app/base.html'%} {% block content %}
 <h1>Login</h1>
 <br />
-{% if messages %}
-   <ul>
-      {% for message in messages %}
-         <li>{{ message}}</li>
-   {% endfor %}
-   </ul>
-   
-{% endif %}
+
 
 <form action="" method="POST">
   {% csrf_token %}

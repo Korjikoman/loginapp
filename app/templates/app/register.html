@@ -1,13 +1,6 @@
 {% extends 'app/base.html'%} {% block title %} Create an Account {%endblock%}
 {%block content%}
-{% if messages %}
-   <ul>
-      {% for message in messages %}
-         <li>{{ message}}</li>
-   {% endfor %}
-   </ul>
-   
-{% endif %}
+
    
 {% comment %} <form method="POST" class="form-group">
   {{ form|crispy}} {% csrf_token %}

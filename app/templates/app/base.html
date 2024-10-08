@@ -3,16 +3,26 @@
 
 <html>
   <head>
-    Our cite's head!
+    Our site's head!
   </head>
   <body>
     <header class="page-header">
-      <h1>Our cite</h1>
+      <h1>Our site</h1>
     </header>
 
     <main class="container">
-      {% if messages%} {% for message in messages %} {{message}} {% endfor %}
-      {%endif %} {% block content %} {% endblock %}
+      
+      {% if messages %}
+        {% for message in messages %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+  {{ message }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
+
+    {% block content%}
+    {% endblock %}
     </main>
 
     <footer>

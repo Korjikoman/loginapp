@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'app',
 ]
 
-CRISPY_TEMPLATE_PACK="bootstrap4"
+CRISPY_TEMPLATE_PACK="bootstrap4"   
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -82,9 +82,9 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "postgres",
         "USER" : "postgres",
-        "PASSWORD" :"123",
+        "PASSWORD" :"ilovehotmoms228",
         "HOST" : "localhost",
-        "PORT": "5433",
+        "PORT": "5432",
     }
 }
 

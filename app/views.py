@@ -1,32 +1,33 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import RegisterForm
+from .forms import RegisterForm, Login_user
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import AuthenticationForm
+
+
+def welcome_page(request):
+    return render(request, 'app/welcome_page.html')
 
 def main(request):
-    
     return render(request, 'app/main_page.html')
 
 def login_user(request):
     if request.method == 'POST':
-        username = request.POST["username"]
-        password = request.POST["password"]
-        user = authenticate(request, username=username,
-                            password=password)
-        if user is not None:
-            messages.success(request, ("Succesfully logged in!"))
-            login(request, user)
-            return redirect('main_page') # Redirect to a success page.
+        form = Login_user(data=request.POST)
+        if form.is_valid():
+            messages.success(request, ("Successfully logged in!"))
+            return redirect('main_page')
         else:
             messages.success(request, ("We don't know such user, try again!!!!!!!"))
-            return redirect('login_page')
+            return redirect('login_user')
     else:
-        return render(request, 'app/login_page.html', {})
+        form = Login_user()
+        return render(request, 'app/login_page.html', {'form' : form})
 
 def logout_user(request):
     logout(request)
-    return render(request, 'app/login_page.html', {})
+    return redirect('login_user')
 
 def register(request):
     if request.method == "POST":

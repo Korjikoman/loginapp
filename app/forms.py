@@ -1,14 +1,14 @@
 from typing import Any
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UsernameField
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
 class RegisterForm(UserCreationForm):
-    username = forms.CharField(label='username', min_length=5, max_length=15)
-    email = forms.EmailField(label='email', widget=forms.EmailInput)
-    password1 = forms.CharField( label='password', widget=forms.PasswordInput)
-    password2 = forms.CharField( label='Confirm password', widget=forms.PasswordInput)
+    username = forms.CharField(min_length=5, max_length=15)
+    email = forms.EmailField(widget=forms.EmailInput)
+    password1 = forms.CharField(widget=forms.PasswordInput)
+    password2 = forms.CharField(widget=forms.PasswordInput)
     
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super(RegisterForm, self).__init__(*args, **kwargs)
@@ -55,3 +55,30 @@ class RegisterForm(UserCreationForm):
             
         )
         return user
+    
+class Login_user(AuthenticationForm):
+    
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super(Login_user, self).__init__( *args, **kwargs)
+        
+    username = UsernameField(widget=forms.TextInput(
+        attrs={'class': 'form-control',
+            'placeholder': 'your username',
+            'id': 'hello',
+        }
+    ))
+        
+    password = forms.CharField(widget=forms.PasswordInput(
+        attrs={
+            'class':'form-control',
+            'placeholder':'your password',
+            'id':'hi'
+        }
+    ))
+    
+        
+    def confirm_login_allowed(self, user):
+        if not user.is_active:
+            raise ValidationError('This account is inactive',
+                                code="inactive")
+    

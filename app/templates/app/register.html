@@ -4,11 +4,19 @@
 
 <form method="POST">
    {% csrf_token %}
-      <p>
-         {{errors}}
-      </p>
-      {{form.as_p}}
-      <input type="submit" name="submit" value="Register">
+   {{form.as_p}}
+      {% for field, error in form.errors.items %}
+      <div class="alert alert-danger d-flex align-items-center" role="alert">
+         <div>
+            {{error|striptags}}
+         </div>
+      </div> 
+      {% endfor %}
+         
+      
+   
+
+      <button type="submit" class="btn btn-primary">Register</button>
 </form>
 
 {% endblock%}

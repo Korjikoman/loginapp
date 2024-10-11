@@ -15,9 +15,17 @@ def main(request):
 def login_user(request):
     if request.method == 'POST':
         form = Login_user(data=request.POST)
+        
         if form.is_valid():
-            messages.success(request, ("Successfully logged in!"))
-            return redirect('main_page')
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username= username, password = password)
+            print(user)
+            if user is not None:
+                login(request, user)
+                messages.success(request, ("Successfully logged in!"))
+                return redirect('main_page')
+            
         else:
             messages.success(request, ("We don't know such user, try again!!!!!!!"))
             return redirect('login_user')
@@ -27,6 +35,7 @@ def login_user(request):
 
 def logout_user(request):
     logout(request)
+    messages.success(request, ('You have been logged out'))
     return redirect('login_user')
 
 def register(request):

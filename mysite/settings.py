@@ -44,6 +44,10 @@ INSTALLED_APPS = [
 
 CRISPY_TEMPLATE_PACK="bootstrap4"   
 
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'localhost'
+
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

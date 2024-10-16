@@ -4,6 +4,19 @@ from django.contrib import messages
 from .forms import RegisterForm, Login_user
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
+from django.urls import reverse_lazy
+from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
+from django.contrib.messages.views import SuccessMessageMixin
+
+
+class ResetPasswordView(SuccessMessageMixin,PasswordResetView):
+    template_name = 'registr/password_reset_form.html'
+    email_template_name = 'registr/password_reset_email.html'
+    subject_template_name = 'registr/password_reset_subject.txt'
+    success_message = ''' Check your email box '''
+    
+    success_url = reverse_lazy('login_user')
+
 
 
 def welcome_page(request):

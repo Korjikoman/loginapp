@@ -6,7 +6,7 @@
 <form action="" method="POST">
   {% csrf_token %}
 
-  <form>
+  
     {{ form.as_p }}
 
     {% for field, error in form.errors.items %}
@@ -20,9 +20,12 @@
 
 
     <input type="submit" value="Log in" class="btn btn-secondary" />
-  </form>
-
-  <br /><br />
-
-  {% endblock %}
+  
 </form>
+<br /><br />
+  <a href="{% url 'password_reset' %}"><i>Forgot Password?</i></a>
+<br>
+<br>
+<a href="{% url 'register' %}">Register now!</a><br><br>
+
+{% endblock %}

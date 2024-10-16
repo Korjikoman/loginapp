@@ -9,10 +9,10 @@ from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmVie
 from django.contrib.messages.views import SuccessMessageMixin
 
 
-class ResetPasswordView(SuccessMessageMixin,PasswordResetView):
+class ResetPassword(SuccessMessageMixin,PasswordResetView):
     template_name = 'registr/password_reset_form.html'
     email_template_name = 'registr/password_reset_email.html'
-    subject_template_name = 'registr/password_reset_subject.txt'
+    
     success_message = ''' Check your email box '''
     
     success_url = reverse_lazy('login_user')

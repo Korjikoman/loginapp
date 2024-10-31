@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'app',
     'recognition',
+    'channels',
 ]
 
 CRISPY_TEMPLATE_PACK="bootstrap4"   
@@ -96,7 +97,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "postgres",
         "USER" : "postgres",
-        "PASSWORD" :"ilovehotmoms228",
+        "PASSWORD" : os.environ.get("DB_PASSWORD"),
         "HOST" : "localhost",
         "PORT": "5433",
     }
@@ -142,3 +143,15 @@ STATIC_ROOT = BASE_DIR / 'static'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Media files
+MEDIA_URL = 'media/'
+MEDIA_ROOT = Path.joinpath(BASE_DIR, 'media')
+
+
+LOGIN_URL = 'login_user'
+
+LOGIN_REDIRECT_URL = 'main_page'
+
+ASGI_APPLICATION = "mysite.asgi.application"

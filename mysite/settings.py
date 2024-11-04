@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'daphne',
     'django.contrib.staticfiles',
     'crispy_bootstrap4',
     'crispy_forms',
@@ -87,7 +88,6 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'mysite.wsgi.application'
 
 
 # Database
@@ -99,7 +99,7 @@ DATABASES = {
         "USER" : "postgres",
         "PASSWORD" : os.environ.get("DB_PASSWORD"),
         "HOST" : "localhost",
-        "PORT": "5433",
+        "PORT": "5432",
     }
 }
 

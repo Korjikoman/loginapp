@@ -26,7 +26,7 @@ def transcribe_small_audio(path, language):
     return text
 
 
-def get_large_audio_transcription(path,language, consumer ,minutes=2):
+async def get_large_audio_transcription(path,language, consumer ,minutes=2):
     sound = AudioSegment.from_file(path)
     
     chunk_length_ms = int(1000*60*minutes)
@@ -55,7 +55,7 @@ def get_large_audio_transcription(path,language, consumer ,minutes=2):
             whole_text += text
             
             # Sending text through WebSocket
-            consumer.send_text(text)
+            await consumer.send_text(text)
             
             # deleting chunk
             try:
@@ -83,7 +83,7 @@ def index(request):
             
             
             file = form.audio # get the audio 
-            
+            file_size = file.size
             file_path = str(settings.MEDIA_ROOT) + '/' + str(file.name)
             if (file.size < 512000):
                 text = transcribe_small_audio(file_path, language="en-US")
@@ -98,7 +98,7 @@ def index(request):
             context = {
                 "text" :text,
                 "AudioForm":audio_form,
-                "file" : file
+                "size" : file_size
                 }
             
         except Exception as ex:

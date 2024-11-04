@@ -12,8 +12,8 @@
 </form>
     
 <p>Your file size :</p>
-{{ file.size|filesizeformat }}
-{{ file.size }}
+{{ size|filesizeformat }}
+{{ size }}
 <h2>Transcript</h2>
 
 {% if error %}
@@ -55,7 +55,7 @@
     };
 </script>
 
-<script>
+{% comment %} <script>
     const errorEl = document.getElementById("error");
     const transcriptEl = document.getElementById("transcript");
     const fileUploadBtn = document.getElementById("upload-button");
@@ -66,5 +66,5 @@
     }
     transcriptEl.innerText = "Transcribing...";
     }
-</script>
+</script> {% endcomment %}
 {% endblock %}

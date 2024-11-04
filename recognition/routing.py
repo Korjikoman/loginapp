@@ -2,5 +2,5 @@ from django.urls import path
 from . import consumers
 
 websocket_urlpatterns = [
-    path('ws/audio_transcription/', consumers.TranscriptionConsumer.as_asgi())
+    path('ws/transcribe_audio/', consumers.TranscriptionConsumer.as_asgi(), name="transcribe_audio")
 ]

@@ -1,15 +1,15 @@
 import json
-from channels.generic.websocket import WebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer
 import time
 
-class TranscriptionConsumer(WebsocketConsumer):
-    def connect(self):
+class TranscriptionConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
         self.accept() # accepting WebSocket connection
     
-    def disconnect(self, close_code):
+    async def disconnect(self, close_code):
         pass
     
-    def send_text(self, text):
-        self.send(text_data=json.dumps({
+    async def send_text(self, text):
+        await self.send(text_data=json.dumps({
             'message':text
         }))

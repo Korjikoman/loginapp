@@ -2,5 +2,5 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("", views.index, name="recognition_index")
+    path("transcribe/", views.index, name="transcribe_audio")
 ]

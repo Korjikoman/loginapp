@@ -4,12 +4,20 @@ import time
 
 class TranscriptionConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.accept() # accepting WebSocket connection
+        self.roomGroupName = "group_text"
+        await self.channel_layer.group_add(
+            self.roomGroupName,
+            self.channel_name
+        )
+        await self.accept() # accepting WebSocket connection
     
     async def disconnect(self, close_code):
-        pass
+        await self.channel_layer.group_discard(
+            self.roomGroupName,
+            self.channel_layer
+        )
     
     async def send_text(self, text):
         await self.send(text_data=json.dumps({
-            'message':text
+            'message' : text
         }))

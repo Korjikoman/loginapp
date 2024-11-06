@@ -11,7 +11,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 
 from .consumers import TranscriptionConsumer
-
+from asgiref.sync import async_to_sync, sync_to_async
 
 r = sr.Recognizer()
 
@@ -45,7 +45,7 @@ async def get_large_audio_transcription(path,language, consumer ,minutes=2):
         audio_chunk.export(chunk_filename, format="wav")
         
         try:
-            text = transcribe_small_audio(chunk_filename, language)
+            text = transcribe_small_audio(chunk_filename, language=language)
             
         except sr.UnknownValueError as e:
             print("Error:", str(e))
@@ -63,6 +63,7 @@ async def get_large_audio_transcription(path,language, consumer ,minutes=2):
             except FileNotFoundError:
                 print("Error: file not found")
     return whole_text
+
 
 @login_required(login_url='login_user')
 def index(request):
@@ -86,12 +87,12 @@ def index(request):
             file_size = file.size
             file_path = str(settings.MEDIA_ROOT) + '/' + str(file.name)
             if (file.size < 512000):
-                text = transcribe_small_audio(file_path, language="en-US")
+                text = transcribe_small_audio(file_path, language="ru-RUS")
             
             else:
                 consumer = TranscriptionConsumer()
                 messages.success(request, ("File size is too big. We will give you a file with transcription..."))
-                text = get_large_audio_transcription(file_path,"en-US", consumer)
+                text = async_to_sync(get_large_audio_transcription)(file_path,"en-US", consumer)
             
             os.remove(file_path)
             
@@ -105,6 +106,6 @@ def index(request):
             context = {"error": str(ex)}
     else:
         context = {
-            "AudioForm" : audio_form
+            "AudioForm" : audio_form 
         }
     return render(request, "recognition/index.html", context )

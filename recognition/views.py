@@ -11,7 +11,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 
 from .consumers import TranscriptionConsumer
-
+from asgiref.sync import async_to_sync, sync_to_async
 
 r = sr.Recognizer()
 
@@ -26,7 +26,7 @@ def transcribe_small_audio(path, language):
     return text
 
 
-def get_large_audio_transcription(path,language, consumer ,minutes=2):
+async def get_large_audio_transcription(path,language, consumer ,minutes=2):
     sound = AudioSegment.from_file(path)
     
     chunk_length_ms = int(1000*60*minutes)
@@ -45,7 +45,7 @@ def get_large_audio_transcription(path,language, consumer ,minutes=2):
         audio_chunk.export(chunk_filename, format="wav")
         
         try:
-            text = transcribe_small_audio(chunk_filename, language)
+            text = transcribe_small_audio(chunk_filename, language=language)
             
         except sr.UnknownValueError as e:
             print("Error:", str(e))
@@ -55,7 +55,7 @@ def get_large_audio_transcription(path,language, consumer ,minutes=2):
             whole_text += text
             
             # Sending text through WebSocket
-            consumer.send_text(text)
+            await consumer.send_text(text)
             
             # deleting chunk
             try:
@@ -63,6 +63,7 @@ def get_large_audio_transcription(path,language, consumer ,minutes=2):
             except FileNotFoundError:
                 print("Error: file not found")
     return whole_text
+
 
 @login_required(login_url='login_user')
 def index(request):
@@ -83,28 +84,28 @@ def index(request):
             
             
             file = form.audio # get the audio 
-            
+            file_size = file.size
             file_path = str(settings.MEDIA_ROOT) + '/' + str(file.name)
             if (file.size < 512000):
-                text = transcribe_small_audio(file_path, language="en-US")
+                text = transcribe_small_audio(file_path, language="ru-RUS")
             
             else:
                 consumer = TranscriptionConsumer()
                 messages.success(request, ("File size is too big. We will give you a file with transcription..."))
-                text = get_large_audio_transcription(file_path,"en-US", consumer)
+                text = async_to_sync(get_large_audio_transcription)(file_path,"en-US", consumer)
             
             os.remove(file_path)
             
             context = {
                 "text" :text,
                 "AudioForm":audio_form,
-                "file" : file
+                "size" : file_size
                 }
             
         except Exception as ex:
             context = {"error": str(ex)}
     else:
         context = {
-            "AudioForm" : audio_form
+            "AudioForm" : audio_form 
         }
     return render(request, "recognition/index.html", context )

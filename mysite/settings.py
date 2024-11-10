@@ -30,7 +30,11 @@ SECRET_KEY = 'django-insecure-@p0m+049k&wpc@(v_i63c)d1^3w1if7x=)j3dqluq327hf0!_^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '.pythonanywhere.com']
+ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0', '.pythonanywhere.com']
+
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
 
 # Emailing users
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -49,17 +53,20 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'daphne',
     'django.contrib.staticfiles',
     'crispy_bootstrap4',
     'crispy_forms',
+    'channels',
     'app',
     'recognition',
-    'channels',
+    'debug_toolbar',
 ]
 
 CRISPY_TEMPLATE_PACK="bootstrap4"   
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -155,3 +162,23 @@ LOGIN_URL = 'login_user'
 LOGIN_REDIRECT_URL = 'main_page'
 
 ASGI_APPLICATION = "mysite.asgi.application"
+
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#         'CONFIG': {
+#             "hosts": [("127.0.0.1", 6379)],  # Убедитесь, что Redis работает на этом хосте и порту
+#         },
+#     },
+# }
+
+# CACHES = {
+#     # "default" is the alias.
+#     "default": {
+#         # Here, we're using the Redis cache backend.
+#         "BACKEND": "django_redis.cache.RedisCache",
+
+#         # A LOCATION parameter to specify the Redis server's address and port.
+#         "LOCATION": "redis://0.0.0.0:6379/",
+#     }
+# }

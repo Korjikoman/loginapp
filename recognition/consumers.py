@@ -1,23 +1,18 @@
 import json
-from channels.generic.websocket import AsyncWebsocketConsumer
-import time
-
-class TranscriptionConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        self.roomGroupName = "group_text"
-        await self.channel_layer.group_add(
-            self.roomGroupName,
-            self.channel_name
-        )
-        await self.accept() # accepting WebSocket connection
-    
-    async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(
-            self.roomGroupName,
-            self.channel_layer
-        )
-    
-    async def send_text(self, text):
-        await self.send(text_data=json.dumps({
-            'message' : text
-        }))
+from channels.generic.websocket import WebsocketConsumer
+import random
+from time import sleep
+class TranscriptionConsumer(WebsocketConsumer):
+    def connect(self):
+        self.accept()
+        for i in range(100):
+            self.send(json.dumps({'message': random.randint(1,100)}))
+            sleep(1)
+        
+    def send_json(self, text_data):
+        self.connect()
+        text_data_json = json.loads(text_data)
+        text_message = text_data_json["message"]
+        self.send(text_data={
+            'message' : text_message
+        })

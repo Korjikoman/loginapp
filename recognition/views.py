@@ -13,6 +13,12 @@ from django.contrib.auth.decorators import login_required
 from .consumers import TranscriptionConsumer
 from asgiref.sync import async_to_sync, sync_to_async
 import json
+
+import traceback
+
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
 r = sr.Recognizer()
 
 
@@ -27,6 +33,8 @@ def transcribe_small_audio(path, language):
 
 
 def get_large_audio_transcription(path,language,minutes=2):
+    channel_layer = get_channel_layer()
+    
     sound = AudioSegment.from_file(path)
     
     chunk_length_ms = int(1000*60*minutes)
@@ -53,12 +61,16 @@ def get_large_audio_transcription(path,language,minutes=2):
             text = f"{text.capitalize()}."
             print(text)
             whole_text += text
-            json_transcribe = json.dumps({"message": text})
-            # Sending json text through WebSocket
-            consumer = TranscriptionConsumer()
-            print(type(json_transcribe))
-            consumer.send_json(json_transcribe)
-            # deleting chunk
+            
+            async_to_sync(channel_layer.group_send)(
+                "transcriptions",
+                {
+                    "type": "send_transcription",
+                    "message": text
+                }
+            )
+            
+            
             try:
                 os.remove(chunk_filename)
             except FileNotFoundError:
@@ -104,7 +116,6 @@ def index(request):
                 }
             
         except Exception as ex: 
-            import traceback
             traceback.print_exc()
             context = {"error": str(ex)}
     else:

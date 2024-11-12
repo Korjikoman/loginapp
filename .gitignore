@@ -44,4 +44,4 @@ $RECYCLE.BIN/
 *.code-workspace
 
 # Audio files
-.Audios
+media/

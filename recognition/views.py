@@ -12,6 +12,12 @@ from django.contrib.auth.decorators import login_required
 
 from .consumers import TranscriptionConsumer
 from asgiref.sync import async_to_sync, sync_to_async
+import json
+
+import traceback
+
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 r = sr.Recognizer()
 
@@ -26,7 +32,9 @@ def transcribe_small_audio(path, language):
     return text
 
 
-async def get_large_audio_transcription(path,language, consumer ,minutes=2):
+def get_large_audio_transcription(path,language,minutes=2):
+    channel_layer = get_channel_layer()
+    
     sound = AudioSegment.from_file(path)
     
     chunk_length_ms = int(1000*60*minutes)
@@ -54,10 +62,15 @@ async def get_large_audio_transcription(path,language, consumer ,minutes=2):
             print(text)
             whole_text += text
             
-            # Sending text through WebSocket
-            await consumer.send_text(text)
+            async_to_sync(channel_layer.group_send)(
+                "transcriptions",
+                {
+                    "type": "send_transcription",
+                    "message": text
+                }
+            )
             
-            # deleting chunk
+            
             try:
                 os.remove(chunk_filename)
             except FileNotFoundError:
@@ -86,13 +99,13 @@ def index(request):
             file = form.audio # get the audio 
             file_size = file.size
             file_path = str(settings.MEDIA_ROOT) + '/' + str(file.name)
-            if (file.size < 512000):
-                text = transcribe_small_audio(file_path, language="ru-RUS")
+            # if (file.size < 512000):
+            #     text = transcribe_small_audio(file_path, language="ru-RUS")
             
-            else:
-                consumer = TranscriptionConsumer()
-                messages.success(request, ("File size is too big. We will give you a file with transcription..."))
-                text = async_to_sync(get_large_audio_transcription)(file_path,"en-US", consumer)
+            # else:
+            
+            messages.success(request, ("File size is too big. We will give you a file with transcription..."))
+            text = get_large_audio_transcription(file_path,"en-US")
             
             os.remove(file_path)
             
@@ -102,7 +115,8 @@ def index(request):
                 "size" : file_size
                 }
             
-        except Exception as ex:
+        except Exception as ex: 
+            traceback.print_exc()
             context = {"error": str(ex)}
     else:
         context = {

@@ -1,39 +1,58 @@
-{% extends 'app/base.html' %}
-{% load static %}
-{% load crispy_forms_tags %}
-{% block content %}
+{% extends 'app/base.html' %} {% load static %} {% load crispy_forms_tags %}
+{%block content %}
 <h2>Upload file</h2>
 
-<form method="post", enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ AudioForm | crispy }}
-    <div class="d-grid gap-3 mt-3">
-        <button type="submit" class="btn btn-outline-success">Upload audio</button>
-    </div>
+<form method="post" , enctype="multipart/form-data">
+  {% csrf_token %} {{ AudioForm | crispy }}
+  <div class="d-grid gap-3 mt-3">
+    <button type="submit" class="btn btn-outline-success">Upload audio</button>
+  </div>
 </form>
-    
-<p>Your file size :</p>
-{{ size|filesizeformat }}
-{{ size }}
-<h2>Transcript</h2>
+
+<p>Your file size :
+  {{ size|filesizeformat }} {{ size }}
+</p>
+<h2>Transcription</h2>
 
 {% if error %}
-    <p id="error" style="color: red">{{ error }}</p>
+<p id="error" style="color: red">{{ error }}</p>
 {% endif %}
 <p id="app">
-    
-    {{ text }}
-
+  {{text}}
 </p>
 
-{% comment %} <script src="{% static 'recog.js' %}"></script> {% endcomment %}
 <script>
-    const socket = new WebSocket('ws://' + window.location.host + '/ws/transcribe_audio/');
+  const socket = new WebSocket(
+    "ws://" + window.location.host + "/ws/transcribe_audio/"
+  );
 
-    socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        console.log(data.message);
-        document.querySelector('#app').innerText = data.message
-    };
+  socket.onmessage = function (e) {
+    const data = JSON.parse(e.data);
+    const message = data.message;
+    setMessage(message);
+  };
+
+  function setMessage(message) {
+    // Create a new p element
+    var newP = document.createElement("p");
+    newP.textContent = message;
+
+  
+    var pElement = document.getElementById("app");
+    pElement.appendChild(newP);
+  
+  // Create a new li element
+  var newLi = document.createElement("li");
+
+  // Create a new anchor element
+  var newAnchor = document.createElement("a");
+  newAnchor.className = "dropdown-item text-wrap";
+  newAnchor.href = "#";
+  newAnchor.textContent = message;
+
+}
+  
+
+
 </script>
 {% endblock %}

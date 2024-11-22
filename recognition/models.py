@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+
+
 class AudioFile(models.Model):
     id = models.CharField(max_length=25, primary_key=True, unique=True, editable=False)
     name = models.ForeignKey(User, on_delete=models.CASCADE, editable=False)
@@ -17,4 +19,9 @@ class AudioFile(models.Model):
         verbose_name_plural = "Audio File Records"
     
 
+class TextFromAudio(models.Model):
+    text = models.CharField(max_length=1000)
+
+    def __str__(self):
+        return self.text
     

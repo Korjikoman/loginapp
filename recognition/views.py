@@ -1,81 +1,15 @@
 from django.shortcuts import render
-
-from .forms import UploadFileForm
-import assemblyai as aai
-from django.contrib import messages
-import speech_recognition as sr
-from pydub import AudioSegment
-import os
-from django.core.files.storage import default_storage
-from django.conf import settings
-from django.contrib.auth.decorators import login_required
-
-from .consumers import TranscriptionConsumer
-from asgiref.sync import async_to_sync, sync_to_async
-import json
-
 import traceback
 
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
+from .forms import UploadFileForm
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
-r = sr.Recognizer()
+from . import transcriptors
+import os
 
-
-def transcribe_small_audio(path, language):
-    file = default_storage.open(path)
-    with sr.AudioFile(file) as source:
-        audio_data = r.record(source)
-        text = str(r.recognize_google(audio_data, language=language))
-    file.close()
-    
-    return text
-
-
-def get_large_audio_transcription(path,language,minutes=2):
-    channel_layer = get_channel_layer()
-    
-    sound = AudioSegment.from_file(path)
-    
-    chunk_length_ms = int(1000*60*minutes)
-    
-    chunks = [sound[i:i + chunk_length_ms] for i in range(0, len(sound), chunk_length_ms)]
-    
-    folder_name=str(settings.MEDIA_ROOT) + "/audio-chunks/"
-    
-    if not os.path.isdir(folder_name):
-        os.mkdir(folder_name)
-        
-    whole_text = ""
-    
-    for i, audio_chunk in enumerate(chunks,start=1):
-        chunk_filename = os.path.join(folder_name, f"chunk{i}.wav")
-        audio_chunk.export(chunk_filename, format="wav")
-        
-        try:
-            text = transcribe_small_audio(chunk_filename, language=language)
-            
-        except sr.UnknownValueError as e:
-            print("Error:", str(e))
-        else:
-            text = f"{text.capitalize()}."
-            print(text)
-            whole_text += text
-            
-            async_to_sync(channel_layer.group_send)(
-                "transcriptions",
-                {
-                    "type": "send_transcription",
-                    "message": text
-                }
-            )
-            
-            
-            try:
-                os.remove(chunk_filename)
-            except FileNotFoundError:
-                print("Error: file not found")
-    return whole_text
+from asgiref.sync import async_to_sync, sync_to_async
+from django.conf import settings
 
 
 @login_required(login_url='login_user')
@@ -99,13 +33,10 @@ def index(request):
             file = form.audio # get the audio 
             file_size = file.size
             file_path = str(settings.MEDIA_ROOT) + '/' + str(file.name)
-            # if (file.size < 512000):
-            #     text = transcribe_small_audio(file_path, language="ru-RUS")
-            
-            # else:
             
             messages.success(request, ("File size is too big. We will give you a file with transcription..."))
-            text = get_large_audio_transcription(file_path,"en-US")
+            text = async_to_sync(transcriptors.get_large_audio_transcription)(file_path,"ru-RU")
+            
             
             os.remove(file_path)
             

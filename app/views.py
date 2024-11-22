@@ -22,9 +22,11 @@ class ResetPassword(SuccessMessageMixin,PasswordResetView):
 def welcome_page(request):
     return render(request, 'app/welcome_page.html')
 
-def main(request):
-    return render(request, 'app/main_page.html')
 
+def main(request):
+    if request.user.is_authenticated:
+        return render(request, 'app/main_page.html')
+    
 def login_user(request):
     if request.method == 'POST':
         form = Login_user(data=request.POST)

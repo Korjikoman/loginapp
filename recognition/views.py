@@ -29,17 +29,17 @@ def index(request):
             print(audioFileObjects)
             
             form = audio_form.save(commit=False)
-            form.name = request.user
+            form.user = request.user
             form.save()
             
             audioFileObjects = AudioFile.objects.all()
             print(audioFileObjects)
             
-            file = form.audio # get the audio
+            file = form.audio_file # get the audio
             file_name, file_extension = os.path.splitext(file.name)
             file_path = str(settings.MEDIA_ROOT) + '/' + str(file.name)
             
-            transcriptor = AudioToText(file_path, "ru-Ru", 0.15)
+            transcriptor = AudioToText(request.user,file_path, "ru-Ru", 0.15)
             if file_extension != ".wav":
                 transcriptor.from_mp3_to_wav()
             
@@ -49,11 +49,14 @@ def index(request):
             
             text = async_to_sync(transcriptor.get_large_audio_transcription)()
 
+            audioFile = audioFileObjects.filter(user=request.user)
+            audioFile.delete()
             
             context = {
+                    
                     "text" :text,
                     "AudioForm":audio_form,
-                    "size" : file.size
+                    "size" : file.size,
                     }
             
         except Exception as ex: 

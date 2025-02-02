@@ -6,7 +6,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.urls import reverse_lazy
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.contrib.messages.views import SuccessMessageMixin
-
+from recognition.models import AudioFile, TextFromAudio
 
 class ResetPassword(SuccessMessageMixin,PasswordResetView):
     template_name = 'registr/password_reset_form.html'
@@ -47,6 +47,12 @@ def login_user(request):
         return render(request, 'app/login_page.html', {'form' : form})
 
 def logout_user(request):
+    
+    
+    list_of_audio_files = AudioFile.objects.filter(user=request.user.id)
+    list_of_audio_files.delete()
+    list_of_text_files = TextFromAudio.objects.filter(user=request.user.id)
+    list_of_text_files.delete()
     logout(request)
     messages.success(request, ('You have been logged out'))
     return redirect('login_user')

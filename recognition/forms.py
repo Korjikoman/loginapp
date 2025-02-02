@@ -4,7 +4,7 @@ from django.core.validators import FileExtensionValidator
 
 
 class UploadFileForm(forms.ModelForm):
-    audio = forms.FileField(
+    audio_file = forms.FileField(
         widget=forms.FileInput(attrs={
             'type':'file',
             'class':'form-control'
@@ -16,5 +16,5 @@ class UploadFileForm(forms.ModelForm):
     )
     class Meta:
         model = AudioFile
-        fields = ['audio']
+        fields = ['audio_file']
     

@@ -1,7 +1,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import async_to_sync
-
+from channels.exceptions import StopConsumer
 
 class TranscriptionConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -17,6 +17,7 @@ class TranscriptionConsumer(AsyncWebsocketConsumer):
             self.group_name,
             self.channel_name
         )
+        raise StopConsumer()
 
     async def send_transcription(self, event):
         await self.send(text_data=json.dumps({ 'message': event['message'] }))

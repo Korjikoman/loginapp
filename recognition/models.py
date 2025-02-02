@@ -12,7 +12,7 @@ class AudioFile(models.Model):
     
     
     def __str__(self):
-        return f'{self.name}'
+        return f'{self.user}'
     
     class Meta:
         ordering = ['created']
@@ -20,6 +20,7 @@ class AudioFile(models.Model):
     
 
 class TextFromAudio(models.Model):
+    user = models.ForeignKey(Users, on_delete=models.CASCADE, default=None)
     text = models.CharField(max_length=1000)
 
     def __str__(self):

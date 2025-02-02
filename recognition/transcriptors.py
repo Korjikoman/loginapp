@@ -20,8 +20,8 @@ import whisper
 
 
 class AudioToText():
-    def __init__(self, path_to_audio, language, minutes):
-
+    def __init__(self, user, path_to_audio, language, minutes):
+        self.user = user
         self.file_path = path_to_audio
         self.lang = language
         self.minutes = minutes
@@ -85,7 +85,7 @@ class AudioToText():
                 text = f"{text.capitalize()}."
                 print(text)
                 whole_text += text
-                text_model = TextFromAudio(text=text)
+                text_model = TextFromAudio(text=text, user = self.user)
                 await sync_to_async(text_model.save)()
                 await sync_to_async(text_model.delete)()
         file.close()

@@ -168,13 +168,5 @@ CHANNEL_LAYERS = {
     },
 }
 
-# CACHES = {
-#     # "default" is the alias.
-#     "default": {
-#         # Here, we're using the Redis cache backend.
-#         "BACKEND": "django_redis.cache.RedisCache",
-
-#         # A LOCATION parameter to specify the Redis server's address and port.
-#         "LOCATION": "redis://0.0.0.0:6379/",
-#     }
-# }
+# CHANGING USER MODEL
+AUTH_USER_MODEL = "app.Users"

@@ -2,21 +2,43 @@
 {%block content%}
 
 
-<form method="POST">
-   {% csrf_token %}
-   {{form.as_p}}
-      {% for field, error in form.errors.items %}
-      <div class="alert alert-danger d-flex align-items-center" role="alert">
-         <div>
-            {{error|striptags}}
-         </div>
-      </div> 
-      {% endfor %}
-         
-      
-   
 
-      <button type="submit" class="btn btn-primary">Register</button>
-</form>
+
+<section class="bg-white py-3 py-md-5">
+   <div class="container">
+     <div class="row justify-content-center">
+       <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+         <div class="card border border-light-subtle rounded-3 shadow-sm">
+           <div class="card-body p-3 p-md-4 p-xl-5">
+             <div class="text-center mb-3">
+               {% comment %} <a href="#!">
+                 <img src="{% static 'logo.png' %}" alt="Logo" width="57" height="57">
+               </a> {% endcomment %}
+             </div>
+             <h2 class="fs-6 fw-normal text-center text-secondary mb-4">Registration</h2>
+             <form method="POST">
+               {% csrf_token %}
+               {{form.as_p}}
+                  {% for field, error in form.errors.items %}
+                  <div class="alert alert-danger d-flex align-items-center" role="alert">
+                     <div>
+                        {{error|striptags}}
+                     </div>
+                  </div> 
+                  {% endfor %}
+                     
+                  <button type="submit" class="btn btn-primary">Register</button>
+            </form>
+             
+           </div>
+         </div>
+       </div>
+     </div>
+   </div>
+ </section>
+ 
+
+
+
 
 {% endblock%}

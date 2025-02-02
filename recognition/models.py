@@ -1,22 +1,22 @@
 from django.db import models
-from django.contrib.auth.models import User
 from django.utils import timezone
-
-
+from django.core.validators import FileExtensionValidator
+from app.models import Users
 class AudioFile(models.Model):
-    id = models.CharField(max_length=25, primary_key=True, unique=True, editable=False)
-    name = models.ForeignKey(User, on_delete=models.CASCADE, editable=False)
-    audio = models.FileField(upload_to='Audios/', null=True)
+    user = models.ForeignKey(Users, on_delete=models.CASCADE, default=None)
+    audio_file = models.FileField(upload_to='Audios/', null=True, validators=[FileExtensionValidator(allowed_extensions=['wav', 'mp3', 'aac', 'flac', 'ogg'])])
     file_type = models.CharField(max_length=5, blank=True)
     created = models.DateTimeField(default=timezone.now)
     file_size = models.IntegerField(null=True)
+    text_file = models.FileField(null=True)
+    
     
     def __str__(self):
         return f'{self.name}'
     
     class Meta:
-        ordering = ['name', 'created']
-        verbose_name_plural = "Audio File Records"
+        ordering = ['created']
+        verbose_name_plural = "Audio Files"
     
 
 class TextFromAudio(models.Model):

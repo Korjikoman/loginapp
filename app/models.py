@@ -1,17 +1,30 @@
+from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
+from .managers import CustomUserManager
+from django.contrib.auth.models import PermissionsMixin
 
-
-class Login(models.Model):
-    username = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, max_length=100)
-    email = models.CharField(max_length=200)
-    password = models.TextField(max_length=200)
+class Users(AbstractBaseUser, PermissionsMixin):
+    email = models.EmailField(_("email address"), unique=True)
+    username = models.CharField(max_length=100)
+    
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     registered_date = models.DateTimeField(default=timezone.now)
-    is_registered = models.BooleanField(default=False)
-    def register(self):
-        self.is_registered = True
-        self.registered_date = timezone.now()
+    
+
+    subscripted = models.BooleanField(default=False)
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []
+    
+    objects = CustomUserManager()
+    
+    def subscribe(self):
+        self.subscripted = True
         self.save()
     
     def __str__(self):

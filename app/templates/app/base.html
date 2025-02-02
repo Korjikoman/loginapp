@@ -20,8 +20,11 @@
     <link rel="stylesheet" href="{% static 'css/app.css' %}" />
   </head>
   <body>
+
     <main class="container">
+      
       {% if messages %} {% for message in messages %}
+
       <div class="alert alert-warning alert-dismissible fade show" role="alert">
         <strong>{{ message }}</strong>
         <button
@@ -31,13 +34,19 @@
           aria-label="Close"
         ></button>
       </div>
-      {% endfor %} {% endif %} {% block content%} {% endblock %}
+
+      {% endfor %} {% endif %}
+
+      {% block content%} {% endblock %}
+
+    
+
     </main>
 
-    <footer class="bg-dark py-5 mt-5 fixed-bottom">
-      <div class="container text-light text-center">
+    <footer class="container bg-dark py-5 mt-5">
+      <div class="container text-light text-center ">
         <p class="display-5 mb-3">
-          RecogniteMe
+          Recognite.Me
         </p>
         <small class="text-white-50">&copy; Copyright by Korjik. All rights reserved </small>
       </div>

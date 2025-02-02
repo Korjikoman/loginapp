@@ -1,15 +1,22 @@
 from typing import Any
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UsernameField
-from django.contrib.auth.models import User
+from .models import Users
 from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 class RegisterForm(UserCreationForm):
+
     username = forms.CharField(min_length=5, max_length=15)
     email = forms.EmailField(widget=forms.EmailInput)
     password1 = forms.CharField(widget=forms.PasswordInput)
     password2 = forms.CharField(widget=forms.PasswordInput)
     
+    
+    class Meta:
+        model = get_user_model()
+        fields = ('username', 'email', 'password1', 'password2')
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super(RegisterForm, self).__init__(*args, **kwargs)
         self.fields['username'].widget.attrs['class'] = 'form-control'
@@ -48,14 +55,14 @@ class RegisterForm(UserCreationForm):
         return password2
     
     def save(self, commit=True):
-        user = User.objects.create_user(
+        user =User.objects.create_user(
             username=self.cleaned_data['username'],
             email=self.cleaned_data['email'],
             password=self.cleaned_data['password2']
             
         )
         return user
-    
+
 class Login_user(AuthenticationForm):
     
     def __init__(self, *args: Any, **kwargs: Any) -> None:

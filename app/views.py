@@ -2,7 +2,6 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import RegisterForm, Login_user
-from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 from django.urls import reverse_lazy
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
@@ -24,8 +23,7 @@ def welcome_page(request):
 
 
 def main(request):
-    if request.user.is_authenticated:
-        return render(request, 'app/main_page.html')
+    return redirect('transcribe_audio')
     
 def login_user(request):
     if request.method == 'POST':
@@ -55,7 +53,7 @@ def logout_user(request):
 
 def register(request):
     if request.method == "POST":
-        form = RegisterForm(request.POST)
+        form = RegisterForm(data=request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, ("Success"))

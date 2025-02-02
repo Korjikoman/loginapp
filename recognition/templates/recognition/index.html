@@ -1,6 +1,42 @@
 {% extends 'app/base.html' %} {% load static %} {% load crispy_forms_tags %}
 {%block content %}
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Recognite.Me</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="#">Instructions</a>
+        </li>
+        
+        <li class="nav-item">
+          <a class="nav-link" href="#">Export</a>
+        </li>
+        
+        <li class="nav-item">
+          <a class="nav-link" href="#">FAQ</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#">Invite a friend</a>
+        </li>
+        <li class="nav-item">
+          <a class="btn btn-danger" type="button" href="{% url 'logout_user' %}">Log out</a>
+        </li>
+      </ul>
+      
+      
+      <button class="btn btn-outline-success" type="submit" href="{% url 'login_user' %}">Sign in</button>
+    </div>
+  </div>
+</nav>
+
 <h2>Upload file</h2>
+
 
 <form method="post" , enctype="multipart/form-data">
   {% csrf_token %} {{ AudioForm | crispy }}
@@ -20,6 +56,36 @@
 <p id="app">
   {{text}}
 </p>
+
+<section class="container">
+  <h2 class="Instructions">Instructions</h2>
+  <p>
+
+  </p>
+</section>
+
+
+<section class="container">
+  <h2 class="Instructions">Export</h2>
+  <p>
+    
+  </p>
+</section>
+
+
+<section class="container">
+  <h2 class="Instructions">FAQ</h2>
+  <p>
+    
+  </p>
+</section>
+
+<section class="container">
+  <h2 class="Instructions">Invite a friend</h2>
+  <p>
+    
+  </p>
+</section>
 
 <script>
   const socket = new WebSocket(

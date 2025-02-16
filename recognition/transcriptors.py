@@ -27,6 +27,7 @@ class AudioToText():
         self.minutes = minutes
         self.model = whisper.load_model("turbo")
 
+
     def from_mp3_to_wav(self):
         sound = AudioSegment.from_mp3(self.file_path)
         sound.export(self.file_path, format="wav")
@@ -54,6 +55,8 @@ class AudioToText():
         
         return text
 
+
+    
     async def get_large_audio_transcription(self):
         sound = AudioSegment.from_wav(self.file_path)
         sound.set_frame_rate(16000).set_channels(1)
@@ -72,6 +75,8 @@ class AudioToText():
         file = open('text.txt', 'w')
         
         for i, audio_chunk in enumerate(chunks, start=1):
+
+                
             chunk_filename = os.path.join(folder_name, f"chunk{i}.wav")
             audio_chunk.export(chunk_filename, format="wav")
 
@@ -88,9 +93,8 @@ class AudioToText():
                 text_model = TextFromAudio(text=text, user = self.user)
                 await sync_to_async(text_model.save)()
                 await sync_to_async(text_model.delete)()
-        file.close()
     
-        #audio = AudioFile.objects.filter(id=)
+        file.close()
         return 
 
     def from_mp3_to_wav(self):

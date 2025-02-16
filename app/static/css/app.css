@@ -47,3 +47,29 @@
     bottom: 0;
     width: 100%;
 }
+
+.rec-text {
+    background-color: darkgray;
+    font-size: 1rem;
+    border-right: 2px solid white;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 0;
+    animation: typing 2s steps(22) forwards blink 0.7s infinite;
+}
+
+@keyframes typing {
+    from {
+        width: 0;
+    }
+
+    to {
+        width: 14ch;
+    }
+}
+
+@keyframes blink {
+    50% {
+        border-color: transparent;
+    }
+}

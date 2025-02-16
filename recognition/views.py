@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 import traceback
 
 from .forms import UploadFileForm
@@ -11,6 +11,10 @@ import os
 from asgiref.sync import async_to_sync, sync_to_async
 from django.conf import settings
 from .models import AudioFile
+
+from .consumers import TranscriptionConsumer
+from channels.layers import get_channel_layer
+
 
 @login_required(login_url='login_user')
 def index(request):
@@ -67,3 +71,20 @@ def index(request):
             "AudioForm" : audio_form
         }
     return render(request, "recognition/index.html", context )
+
+from channels.exceptions import StopConsumer
+from channels.generic import websocket
+
+async def stop_recognition(request):
+    channel_layer = get_channel_layer()
+    try:
+        await channel_layer.group_send(
+            f"transcription_{request.session.session_key}",
+            {
+                "type": "websocket.close",
+                "code": 1000
+            }
+        )
+        raise StopConsumer()
+    except StopConsumer:
+        return redirect("transcribe_audio")

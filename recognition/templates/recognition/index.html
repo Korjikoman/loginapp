@@ -42,6 +42,7 @@
   {% csrf_token %} {{ AudioForm | crispy }}
   <div class="d-grid gap-3 mt-3">
     <button type="submit" class="btn btn-outline-success">Upload audio</button>
+    
   </div>
 </form>
 
@@ -56,9 +57,14 @@
 <p id="error" style="color: red">{{ error }}</p>
 {% endif %}
 
-<p id="app">
-  {{text}}
-</p>
+
+<section id="app" class="rec-text">
+  <a type="button" class="btn btn-dark" href="{% url 'stop_recognition' %}">Stop</a>
+  
+{{text}}
+
+</section>
+
 
 <section class="container">
   <h2 class="Instructions">Instructions</h2>

@@ -18,6 +18,7 @@ class TranscriptionConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
         raise StopConsumer()
+    
 
     async def send_transcription(self, event):
         await self.send(text_data=json.dumps({ 'message': event['message'] }))

@@ -1,4 +1,4 @@
-.close:hover {
+/* .close:hover {
     opacity: 1;
 }
 
@@ -20,7 +20,11 @@
     transform: rotate(-45deg);
 }
 
+.rec-text {
+    color: #333;
+}
 
+/* 
 .fa-solid {
     font-size: 26px;
 }
@@ -34,12 +38,12 @@
     padding: .6em;
     border-radius: 999px;
     line-height: .75em;
-    color: rgb(251, 251, 251);
+    color: rgb(153, 59, 59);
     background: #ff0000d9;
     text-align: center;
     min-width: 2em;
     font-weight: bold;
-}
+} 
 
 .footer {
     position: fixed;
@@ -47,29 +51,4 @@
     bottom: 0;
     width: 100%;
 }
-
-.rec-text {
-    background-color: darkgray;
-    font-size: 1rem;
-    border-right: 2px solid white;
-    white-space: nowrap;
-    overflow: hidden;
-    width: 0;
-    animation: typing 2s steps(22) forwards blink 0.7s infinite;
-}
-
-@keyframes typing {
-    from {
-        width: 0;
-    }
-
-    to {
-        width: 14ch;
-    }
-}
-
-@keyframes blink {
-    50% {
-        border-color: transparent;
-    }
-}
+*/

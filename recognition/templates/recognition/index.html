@@ -59,8 +59,6 @@
 
 
 <section id="app" class="rec-text">
-  <a type="button" class="btn btn-dark" href="{% url 'stop_recognition' %}">Stop</a>
-  
 {{text}}
 
 </section>
@@ -111,23 +109,13 @@
     // Create a new p element
     var newP = document.createElement("p");
     newP.textContent = message;
-
+    console.log(message)
   
     var pElement = document.getElementById("app");
     pElement.appendChild(newP);
   
-  // Create a new li element
-  var newLi = document.createElement("li");
-
-  // Create a new anchor element
-  var newAnchor = document.createElement("a");
-  newAnchor.className = "dropdown-item text-wrap";
-  newAnchor.href = "#";
-  newAnchor.textContent = message;
 
 }
-  
-
 
 </script>
 {% endblock %}

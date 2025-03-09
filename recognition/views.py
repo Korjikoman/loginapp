@@ -1,20 +1,18 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 import traceback
+
+from django.core.files.base import ContentFile, File
 
 from .forms import UploadFileForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
-from .transcriptors import AudioToText
+from .models import AudioFile, Chunks, TextFromAudio
+from pydub import AudioSegment
+import io
 import os
 
-from asgiref.sync import async_to_sync, sync_to_async
-from django.conf import settings
-from .models import AudioFile
-
-from .consumers import TranscriptionConsumer
-from channels.layers import get_channel_layer
-
+from .tasks import transcribe_small_audio
 
 @login_required(login_url='login_user')
 def index(request):
@@ -22,6 +20,7 @@ def index(request):
     audio_form = UploadFileForm()
     
     if request.method == "POST":
+        # создаю форму
         audio_form = UploadFileForm(request.POST, request.FILES)
         
         if not audio_form.is_valid():
@@ -29,42 +28,51 @@ def index(request):
             return render(request, 'recognition/index.html', {"error": "Provide a valid file"})
         
         try:
-            audioFileObjects = AudioFile.objects.all()
-            print(audioFileObjects)
-            
+            # save audio into database 
             form = audio_form.save(commit=False)
             form.user = request.user
             form.save()
             
-            audioFileObjects = AudioFile.objects.all()
-            print(audioFileObjects)
+            # take audio from db
+            audio_object = AudioFile.objects.get(user=request.user)
+            audio_file = audio_object.audio_file
+            print(audio_file)
             
-            file = form.audio_file # get the audio
-            file_name, file_extension = os.path.splitext(file.name)
-            file_path = str(settings.MEDIA_ROOT) + '/' + str(file.name)
+            # config            
+            language = "ru-RU"
+            minutes = 0.1
             
-            transcriptor = AudioToText(request.user,file_path, "ru-Ru", 0.15)
-            if file_extension != ".wav":
-                transcriptor.from_mp3_to_wav()
-            
-            # Большой файл >= 200 Mb
-            if file.size >= 1677721600:
-                messages.success(request, ("File size is too big. We will give you a file with transcription..."))
-            
-            text = async_to_sync(transcriptor.get_large_audio_transcription)()
+            # crush it into small chunks
+            sound = AudioSegment.from_wav(audio_file.path)
+            sound.set_frame_rate(16000).set_channels(1)
+            chunk_length_ms = int(1000 * 60 * minutes)
 
-            audioFile = audioFileObjects.filter(user=request.user)
-            audioFile.delete()
+            chunks = [sound[i:i + chunk_length_ms] for i in range(0, len(sound), chunk_length_ms)]
             
-            context = {
+            # save all my chunks into database
+            save_chunks(chunks, request.user)
+
+            
+            # recognize our chunks
+            try:
+                
+                transcribe_small_audio.delay(request.user.email)
                     
-                    "text" :text,
-                    "AudioForm":audio_form,
-                    "size" : file.size,
-                    }
+
+            except Exception:
+                audio = AudioFile.objects.get(user = request.user)
+                audio_files = Chunks.objects.filter(user=request.user).order_by("id")
+                audio_files.delete()
+                if audio:
+                    audio.delete()
+                    print(f"Exception occurred! Audio deleted!\n{Exception}")
+                    raise Exception
+
             
         except Exception as ex: 
             traceback.print_exc()
+        
+            
             context = {"error": str(ex)}
     else:
         context = {
@@ -72,19 +80,21 @@ def index(request):
         }
     return render(request, "recognition/index.html", context )
 
-from channels.exceptions import StopConsumer
-from channels.generic import websocket
+def save_chunks(chunks, user):
 
-async def stop_recognition(request):
-    channel_layer = get_channel_layer()
-    try:
-        await channel_layer.group_send(
-            f"transcription_{request.session.session_key}",
-            {
-                "type": "websocket.close",
-                "code": 1000
-            }
-        )
-        raise StopConsumer()
-    except StopConsumer:
-        return redirect("transcribe_audio")
+    for i, audio_chunk in enumerate(chunks):
+        buffer = io.BytesIO()
+        audio_chunk.export(buffer, format="wav")
+        buffer.seek(0)
+        if buffer.getbuffer().nbytes == 0:
+            raise ValueError(f"Chunk is empty, chunk--{i}")
+        # take saved file
+        chunk_file = File(buffer, name=f"{user.email}_chunk_{i}")
+        # create a database object
+        chunk_into_database = Chunks(user = user)
+        # save file into object
+        chunk_into_database.chunk.save(f"{user.email}_chunk_{i}", chunk_file)
+        # save object into db
+        chunk_into_database.save()
+        print(f"Chunk {i} saved. User -- {user.email}")
+    

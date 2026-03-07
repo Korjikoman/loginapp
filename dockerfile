@@ -15,12 +15,15 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip install --upgrade pip
 
-COPY requirements.txt /app/
+COPY . /app/
+
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . /app/
+COPY docker-entrypoint.sh /app/docker-entrypoint.sh
+
+RUN chmod +x /app/docker-entrypoint.sh
 
 EXPOSE 8000
 
-CMD ["uvicorn", "mysite.asgi:application", "--host", "0.0.0.0", "--port", "8000", "--workers", "3"]
+CMD ["/app/docker-entrypoint.sh"]

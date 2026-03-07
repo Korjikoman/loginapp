@@ -24,6 +24,7 @@ services:
       timeout: 5s
       retries: 5
 
+      
   django-web:
     build: .
     container_name: django-docker
@@ -43,6 +44,23 @@ services:
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
       DATABASE_HOST: ${DATABASE_HOST}
       DATABASE_PORT: ${DATABASE_PORT}
+    env_file:
+      - .env
+
+  celery-worker:
+    build: .
+    container_name: celery-worker
+    command: celery -A recognition worker -l info --pool=solo
+    volumes:
+      - .:/app
+      - ./media:/app/media
+    environment:
+      - REDIS_HOST=redis
+      - DATABASE_HOST=db
+    depends_on:
+      - redis
+      - db
+      - django-web
     env_file:
       - .env
 volumes:

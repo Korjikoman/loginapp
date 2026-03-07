@@ -21,14 +21,17 @@ r = sr.Recognizer()
 def from_mp3_to_wav(self):
     sound = AudioSegment.from_mp3(self.file_path)
     sound.export(self.file_path, format="wav")
+    print("ФАЙЛ ПРИНЯТ !!!!")
     return self.file_path
 
 @app.task()
 def transcribe_small_audio(email):
+
     user = Users.objects.get(email=email)
     r = sr.Recognizer()
     model = whisper.load_model("turbo")
     
+    print("[transcribe_small_audio] юзер и модель загружены")
     
     audio_files = Chunks.objects.filter(user=user).order_by("id")
     for audio_file in audio_files:
@@ -38,6 +41,7 @@ def transcribe_small_audio(email):
     
         # распознаем текст
         with sr.AudioFile(path) as source:
+            print("[transcribe_small_audio] НАЧИНАЮ РАСПОЗНАВАТЬ ТЕКСТ")
             audio_data = r.record(source)
             start = time.time()
             try:

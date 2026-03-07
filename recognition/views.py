@@ -55,7 +55,7 @@ def index(request):
             
             # recognize our chunks
             try:
-                
+                print("[index] TRYING TO TRANSCRIBEEE")
                 transcribe_small_audio.delay(request.user.email)
                     
 
